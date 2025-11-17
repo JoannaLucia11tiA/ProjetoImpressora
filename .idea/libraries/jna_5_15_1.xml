@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="jna-5.15.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Java-Aluno EM/out/production/Java-Aluno EM/libs/jna-5.15.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
