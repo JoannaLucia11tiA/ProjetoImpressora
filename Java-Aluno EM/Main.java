@@ -14,7 +14,7 @@ public class Main {
 
         // Caminho completo para a DLL
         ImpressoraDLL INSTANCE = (ImpressoraDLL) Native.load(
-                "C:\\Users\\joann\\Downloads\\Java-Aluno EM\\Java-Aluno EM\\E1_Impressora01.dll",
+                "C:\\Users\\joanna_lucia\\Downloads\\Java-Aluno EM\\Java-Aluno EM\\Java-Aluno EM\\E1_Impressora01.dll",
                 ImpressoraDLL.class
         );
 
@@ -147,7 +147,10 @@ public class Main {
     public static void ImpressaoTexto() {
         if (conexaoAberta) {
             int retorno = ImpressoraDLL.INSTANCE.ImpressaoTexto(
-                    "Teste de impressao",1, 4, 0
+                    "Teste de impressao\n",
+                    1,   // tipoLetra (0 ou 1)
+                    0,   // italico (0 ou 1)
+                    0    // sublinhado (0 ou 1)
             );
 
             if (retorno == 0) {
@@ -251,6 +254,53 @@ public class Main {
         ImpressoraDLL.INSTANCE.AvancaPapel(2);
     }
 
+    public static void impressaoXMLSAT(){
+        if (conexaoAberta) {
+
+            String dados = "path=C:\\Users\\joanna_lucia\\Downloads\\Java-Aluno EM\\Java-Aluno EM\\Java-Aluno EM\\XMLSAT.xml";
+
+            int retorno = ImpressoraDLL.INSTANCE.ImprimeXMLSAT(dados, 0);
+
+            if (retorno == 0) {
+                System.out.println("Impressao OK");
+            } else {
+                System.out.println("Erro. Código de erro: " + retorno);
+            }
+        } else {
+            System.out.println("Precisa abrir a conexao primeiro.");
+        }
+
+    }
+
+    public static void ImprimeXMLCancelamentoSAT(){
+        if (conexaoAberta) {
+            try {
+
+                String xml = new String(java.nio.file.Files.readAllBytes(
+                        java.nio.file.Paths.get("C:\\caminho\\do\\arquivo\\NFCeCancelamento.xml")
+                ));
+
+
+                String assinaturaQRCode = "";
+
+                int retorno = ImpressoraDLL.INSTANCE.ImprimeXMLCancelamentoSAT(xml, assinaturaQRCode, 0);
+
+                if (retorno == 0) {
+                    System.out.println("Impressao OK");
+                } else {
+                    System.out.println("Erro. Código de erro: " + retorno);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Precisa abrir a conexao primeiro.");
+        }
+    }
+
+
+
     //criar o restante das funçoes aqui!
 
 	/* - `ImpressaoTexto()`          ("Teste de impressao", 1, 4, 0);
@@ -303,72 +353,28 @@ public class Main {
                     break;
                 case "3":
                     ImpressaoTexto();
+                    ImpressoraDLL.INSTANCE.Corte(4);
                     break;
 
                 case "4":
                     ImpressaoQRCode();
+                    ImpressoraDLL.INSTANCE.Corte(4);
                     break;
                 case "5":
                     impressaoCodigoBarras();
+                    ImpressoraDLL.INSTANCE.Corte(4);
                     break;
 
                 case "6":
-                    if (conexaoAberta) {
-                        JFileChooser fileChooser = new JFileChooser();
-                        fileChooser.setCurrentDirectory(new File(".")); // Diretório atual do programa
-                        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Arquivos XML", "xml"));
-
-                        int result = fileChooser.showOpenDialog(null);
-
-                        if (result == JFileChooser.APPROVE_OPTION) {
-                            File selectedFile = fileChooser.getSelectedFile();
-                            String path = selectedFile.getAbsolutePath();
-
-                            try {
-                                String conteudoXML = lerArquivoComoString(path);
-                                int retImpXMLSAT = ImpressoraDLL.INSTANCE.ImprimeXMLSAT(conteudoXML, 0);
-                                ImpressoraDLL.INSTANCE.Corte(5);
-                                System.out.println(retImpXMLSAT == 0 ? "Impressão de XML realizada" : "Erro ao realizar a impressão do XML SAT! Retorno: " + retImpXMLSAT);
-                            } catch (IOException e) {
-                                System.out.println("Erro ao ler o arquivo XML: " + e.getMessage());
-                            }
-                        } else {
-                            System.out.println("Nenhum arquivo selecionado.");
-                        }
-                    } else {
-                        System.out.println("Erro: Conexão não está aberta.");
-                    }
+                    impressaoXMLSAT();
+                    ImpressoraDLL.INSTANCE.Corte(4);
                     break;
+
 
                 case "7":
-                    if (conexaoAberta) {
-                        JFileChooser fileChooser = new JFileChooser();
-                        fileChooser.setCurrentDirectory(new File(".")); // Diretório atual do programa
-                        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Arquivos XML", "xml"));
-                        String assQRCode = "Q5DLkpdRijIRGY6YSSNsTWK1TztHL1vD0V1Jc4spo/CEUqICEb9SFy82ym8EhBRZjbh3btsZhF+sjHqEMR159i4agru9x6KsepK/q0E2e5xlU5cv3m1woYfgHyOkWDNcSdMsS6bBh2Bpq6s89yJ9Q6qh/J8YHi306ce9Tqb/drKvN2XdE5noRSS32TAWuaQEVd7u+TrvXlOQsE3fHR1D5f1saUwQLPSdIv01NF6Ny7jZwjCwv1uNDgGZONJdlTJ6p0ccqnZvuE70aHOI09elpjEO6Cd+orI7XHHrFCwhFhAcbalc+ZfO5b/+vkyAHS6CYVFCDtYR9Hi5qgdk31v23w==";
-
-                        int result = fileChooser.showOpenDialog(null);
-
-                        if (result == JFileChooser.APPROVE_OPTION) {
-                            File selectedFile = fileChooser.getSelectedFile();
-                            String path = selectedFile.getAbsolutePath();
-
-                            try {
-                                String conteudoXML = lerArquivoComoString(path);
-                                int retImpCanXMLSAT = ImpressoraDLL.INSTANCE.ImprimeXMLCancelamentoSAT(conteudoXML, assQRCode, 0);
-                                ImpressoraDLL.INSTANCE.Corte(5);
-                                System.out.println(retImpCanXMLSAT == 0 ? "Impressão de XML de Cancelamento realizada" : "Erro ao realizar a impressão do XML de Cancelamento SAT! Retorno: " + retImpCanXMLSAT);
-                            } catch (IOException e) {
-                                System.out.println("Erro ao ler o arquivo XML: " + e.getMessage());
-                            }
-                        } else {
-                            System.out.println("Nenhum arquivo selecionado.");
-                        }
-                    } else {
-                        System.out.println("Erro: Conexão não está aberta.");
-                    }
+                    ImprimeXMLCancelamentoSAT();
+                    ImpressoraDLL.INSTANCE.Corte(4);
                     break;
-
 
                 case "8":
                     AbreGavetaElgin();
@@ -396,5 +402,3 @@ public class Main {
         return new String(data, StandardCharsets.UTF_8);
     }
 }
-
-
