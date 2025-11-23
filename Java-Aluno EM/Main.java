@@ -272,30 +272,32 @@ public class Main {
 
     }
 
-    public static void ImprimeXMLCancelamentoSAT(){
+    public static void ImprimeXMLCancelamentoSAT() {
         if (conexaoAberta) {
-            try {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setCurrentDirectory(new File(".")); // Diretório atual do programa
+            fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Arquivos XML", "xml"));
+            String assQRCode = 	"Q5DLkpdRijIRGY6YSSNsTWK1TztHL1vD0V1Jc4spo/CEUqICEb9SFy82ym8EhBRZjbh3btsZhF+sjHqEMR159i4agru9x6KsepK/q0E2e5xlU5cv3m1woYfgHyOkWDNcSdMsS6bBh2Bpq6s89yJ9Q6qh/J8YHi306ce9Tqb/drKvN2XdE5noRSS32TAWuaQEVd7u+TrvXlOQsE3fHR1D5f1saUwQLPSdIv01NF6Ny7jZwjCwv1uNDgGZONJdlTJ6p0ccqnZvuE70aHOI09elpjEO6Cd+orI7XHHrFCwhFhAcbalc+ZfO5b/+vkyAHS6CYVFCDtYR9Hi5qgdk31v23w==";
 
-                String xml = new String(java.nio.file.Files.readAllBytes(
-                        java.nio.file.Paths.get("C:\\caminho\\do\\arquivo\\NFCeCancelamento.xml")
-                ));
+            int result = fileChooser.showOpenDialog(null);
 
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                String path = selectedFile.getAbsolutePath();
 
-                String assinaturaQRCode = "";
-
-                int retorno = ImpressoraDLL.INSTANCE.ImprimeXMLCancelamentoSAT(xml, assinaturaQRCode, 0);
-
-                if (retorno == 0) {
-                    System.out.println("Impressao OK");
-                } else {
-                    System.out.println("Erro. Código de erro: " + retorno);
+                try {
+                    String conteudoXML = lerArquivoComoString(path);
+                    int retImpCanXMLSAT = ImpressoraDLL.INSTANCE.ImprimeXMLCancelamentoSAT(conteudoXML, assQRCode, 0);
+                    ImpressoraDLL.INSTANCE.Corte(5);
+                    System.out.println(retImpCanXMLSAT == 0 ? "Impressão de XML de Cancelamento realizada" : "Erro ao realizar a impressão do XML de Cancelamento SAT! Retorno: " + retImpCanXMLSAT);
+                } catch (IOException e) {
+                    System.out.println("Erro ao ler o arquivo XML: " + e.getMessage());
                 }
-
-            } catch (Exception e) {
-                e.printStackTrace();
+            } else {
+                System.out.println("Nenhum arquivo selecionado.");
             }
         } else {
-            System.out.println("Precisa abrir a conexao primeiro.");
+            System.out.println("Erro: Conexão não está aberta.");
         }
     }
 
